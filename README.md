@@ -1,10 +1,10 @@
-# Decontamination Reveals a Convergent Microbiome–Functional Signature of Gut–Lymph–Lung Translocation in Sepsis
+# Rigorous decontamination collapses mesenteric lymph microbiome signals to a single reproducible Enterococcaceae signal consistent with gut–lung translocation in sepsis
 
 ## Overview
 
 This repository contains the analysis code for the manuscript:
 
-> **Decontamination Reveals a Convergent Microbiome–Functional Signature of Gut–Lymph–Lung Translocation in Sepsis**
+> **Rigorous decontamination collapses mesenteric lymph microbiome signals to a single reproducible Enterococcaceae signal consistent with gut–lung translocation in sepsis**
 >
 > Submitted to *Microbiome*
 
