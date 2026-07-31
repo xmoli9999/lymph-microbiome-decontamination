@@ -1,7 +1,5 @@
-pandas>=1.5
-numpy>=1.23
-scipy>=1.9
-scikit-bio>=0.5.8
-pydeseq2>=0.4
+# Reproducibility: Python 3.10+; only these four packages are required.
+pandas>=1.5,<3
+numpy>=1.23,<3
+scipy>=1.11        # needs scipy.stats.false_discovery_control (>=1.11)
 matplotlib>=3.6
-seaborn>=0.12

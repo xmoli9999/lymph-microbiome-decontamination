@@ -1,67 +1,67 @@
-sample_id,group,time_point,sample_type
-LB01,CLP,0h,Lymph
-LB02,CLP,0h,Lymph
-LB03,CLP,0h,Lymph
-LB04,CLP,0h,Lymph
-LB05,CLP,0h,Lymph
-LB06,CLP,4h,Lymph
-LB07,CLP,4h,Lymph
-LB08,CLP,4h,Lymph
-LB09,CLP,4h,Lymph
-LB10,CLP,4h,Lymph
-LB11,CLP,8h,Lymph
-LB12,CLP,8h,Lymph
-LB13,CLP,8h,Lymph
-LB14,CLP,8h,Lymph
-LB15,CLP,8h,Lymph
-LB16,CLP,12h,Lymph
-LB17,CLP,12h,Lymph
-LB18,CLP,12h,Lymph
-LB19,CLP,12h,Lymph
-LB20,CLP,12h,Lymph
-LB21,CLP,24h,Lymph
-LB22,CLP,24h,Lymph
-LB23,CLP,24h,Lymph
-LB24,CLP,24h,Lymph
-LB25,CLP,24h,Lymph
-FB01,CLP,0h,Fecal
-FB02,CLP,0h,Fecal
-FB03,CLP,0h,Fecal
-FB04,CLP,0h,Fecal
-FB05,CLP,0h,Fecal
-FB06,CLP,4h,Fecal
-FB07,CLP,4h,Fecal
-FB08,CLP,4h,Fecal
-FB09,CLP,4h,Fecal
-FB10,CLP,4h,Fecal
-FB11,CLP,8h,Fecal
-FB12,CLP,8h,Fecal
-FB13,CLP,8h,Fecal
-FB14,CLP,8h,Fecal
-FB15,CLP,8h,Fecal
-FB16,CLP,12h,Fecal
-FB17,CLP,12h,Fecal
-FB18,CLP,12h,Fecal
-FB19,CLP,12h,Fecal
-FB20,CLP,12h,Fecal
-FB21,CLP,24h,Fecal
-FB22,CLP,24h,Fecal
-FB23,CLP,24h,Fecal
-FB24,CLP,24h,Fecal
-FB25,CLP,24h,Fecal
-FP01,CLP,0h,BALF
-FP02,CLP,0h,BALF
-FP03,CLP,4h,BALF
-FP04,CLP,4h,BALF
-FP05,CLP,8h,BALF
-FP06,CLP,8h,BALF
-FP07,CLP,12h,BALF
-FP08,CLP,12h,BALF
-FP09,CLP,24h,BALF
-FP10,CLP,24h,BALF
-NC01,NegControl,NA,NegControl
-NC02,NegControl,NA,NegControl
-NC03,NegControl,NA,NegControl
-NC04,NegControl,NA,NegControl
-NC05,NegControl,NA,NegControl
-NC06,NegControl,NA,NegControl
+sample_id,sample_type,group,animal_id,timepoint_h,batch,notes
+21_FB,Fecal,Normal_control,21,NA,main,
+11_FB,Fecal,Sepsis_no_drainage,11,NA,main,
+5_FP,BALF,Sepsis_lymph_drainage,5,NA,main,
+15_FB,Fecal,Sepsis_no_drainage,15,NA,main,
+25_FB,Fecal,Normal_control,25,NA,main,
+26_FB,Fecal,Normal_control,26,NA,main,
+3_FB,Fecal,Sepsis_lymph_drainage,3,NA,main,
+16_FB,Fecal,Sepsis_no_drainage,16,NA,main,
+9_FB,Fecal,Sepsis_lymph_drainage,9,NA,main,
+6_FB,Fecal,Sepsis_lymph_drainage,6,NA,main,
+13_FP,BALF,Sepsis_no_drainage,13,NA,main,
+14_FB,Fecal,Sepsis_no_drainage,14,NA,main,
+13_FB,Fecal,Sepsis_no_drainage,13,NA,main,
+25_FP,BALF,Normal_control,25,NA,main,
+15_FP,BALF,Sepsis_no_drainage,15,NA,main,
+5_24hLB,Lymph,Sepsis_lymph_drainage,5,24,main,
+23_FB,Fecal,Normal_control,23,NA,main,
+11_FP,BALF,Sepsis_no_drainage,11,NA,main,
+24_FB,Fecal,Normal_control,24,NA,main,
+5_12hLB,Lymph,Sepsis_lymph_drainage,5,12,main,
+6_8hLB,Lymph,Sepsis_lymph_drainage,6,8,main,
+6_24hLB,Lymph,Sepsis_lymph_drainage,6,24,main,
+24_FP,BALF,Normal_control,24,NA,main,
+3_24hLB,Lymph,Sepsis_lymph_drainage,3,24,main,
+23_FP,BALF,Normal_control,23,NA,main,
+26_FP,BALF,Normal_control,26,NA,main,
+5_0hLB,Lymph,Sepsis_lymph_drainage,5,0,first_batch_0h_contaminated,"EXCLUDED: first-batch 0h, unflushed-cannula contamination; superseded by LB_x"
+3_12hLB,Lymph,Sepsis_lymph_drainage,3,12,main,
+1_24hLB,Lymph,Sepsis_lymph_drainage,1,24,main,
+21_FP,BALF,Normal_control,21,NA,main,
+9_12hLB,Lymph,Sepsis_lymph_drainage,9,12,main,
+6_4hLB,Lymph,Sepsis_lymph_drainage,6,4,main,
+1_0hLB,Lymph,Sepsis_lymph_drainage,1,0,first_batch_0h_contaminated,"EXCLUDED: first-batch 0h, unflushed-cannula contamination; superseded by LB_x"
+16_FP,BALF,Sepsis_no_drainage,16,NA,main,
+9_0hLB,Lymph,Sepsis_lymph_drainage,9,0,first_batch_0h_contaminated,"EXCLUDED: first-batch 0h, unflushed-cannula contamination; superseded by LB_x"
+1_FB,Fecal,Sepsis_lymph_drainage,1,NA,main,
+3_8hLB,Lymph,Sepsis_lymph_drainage,3,8,main,
+3_0hLB,Lymph,Sepsis_lymph_drainage,3,0,first_batch_0h_contaminated,"EXCLUDED: first-batch 0h, unflushed-cannula contamination; superseded by LB_x"
+14_FP,BALF,Sepsis_no_drainage,14,NA,main,
+6_12hLB,Lymph,Sepsis_lymph_drainage,6,12,main,
+9_24hLB,Lymph,Sepsis_lymph_drainage,9,24,main,
+9_8hLB,Lymph,Sepsis_lymph_drainage,9,8,main,
+5_8hLB,Lymph,Sepsis_lymph_drainage,5,8,main,
+1_FP,BALF,Sepsis_lymph_drainage,1,NA,main,
+5_FB,Fecal,Sepsis_lymph_drainage,5,NA,main,
+6_FP,BALF,Sepsis_lymph_drainage,6,NA,main,
+9_FP,BALF,Sepsis_lymph_drainage,9,NA,main,
+1_8hLB,Lymph,Sepsis_lymph_drainage,1,8,main,
+6_0hLB,Lymph,Sepsis_lymph_drainage,6,0,first_batch_0h_contaminated,"EXCLUDED: first-batch 0h, unflushed-cannula contamination; superseded by LB_x"
+LB_3,Lymph,Sepsis_lymph_drainage,5,0,recollection_0h,Re-collected 0h baseline (first-batch 0h contaminated by unflushed cannula); paired blank con_3
+LB_5,Lymph,Sepsis_lymph_drainage,9,0,recollection_0h,Re-collected 0h baseline (first-batch 0h contaminated by unflushed cannula); paired blank con_5
+LB_4,Lymph,Sepsis_lymph_drainage,6,0,recollection_0h,Re-collected 0h baseline (first-batch 0h contaminated by unflushed cannula); paired blank con_4
+3_FP,BALF,Sepsis_lymph_drainage,3,NA,main,
+1_4hLB,Lymph,Sepsis_lymph_drainage,1,4,main,
+con_2,NegControl,Control,NA,NA,recollection_0h,Negative extraction control
+con_3,NegControl,Control,NA,NA,recollection_0h,Negative extraction control
+9_4hLB,Lymph,Sepsis_lymph_drainage,9,4,main,
+3_4hLB,Lymph,Sepsis_lymph_drainage,3,4,main,
+water,NegControl,Control,NA,NA,main,Negative extraction control
+con_1,NegControl,Control,NA,NA,recollection_0h,Negative extraction control
+LB_2,Lymph,Sepsis_lymph_drainage,3,0,recollection_0h,Re-collected 0h baseline (first-batch 0h contaminated by unflushed cannula); paired blank con_2
+con_4,NegControl,Control,NA,NA,recollection_0h,Negative extraction control
+con_5,NegControl,Control,NA,NA,recollection_0h,Negative extraction control
+LB_1,Lymph,Sepsis_lymph_drainage,1,0,recollection_0h,Re-collected 0h baseline (first-batch 0h contaminated by unflushed cannula); paired blank con_1
+1_12hLB,Lymph,Sepsis_lymph_drainage,1,12,main,
+5_4hLB,Lymph,Sepsis_lymph_drainage,5,4,main,
