@@ -26,9 +26,11 @@ warnings.filterwarnings("ignore")
 _here = os.path.dirname(os.path.abspath(__file__))
 OTU_TAXON = sys.argv[1] if len(sys.argv) > 1 else os.path.join(_here, "data", "otu_taxon.xls")
 if not os.path.exists(OTU_TAXON):
-    OTU_TAXON = "/mnt/user-data/uploads/合并/workflow_results/2.OTU_Analysis/OTU_Taxon/OtuTaxon_summary/otu_taxon.xls"
+    raise FileNotFoundError(
+        f"OTU table not found at: {OTU_TAXON}\n"
+        f"Pass the path as the first argument: python3 reproduce_all.py <path/to/otu_taxon.xls>")
 MIN_DEPTH = 5000
-OUT = "./repro_out"; os.makedirs(OUT, exist_ok=True)
+OUT = os.path.join(_here, "repro_out"); os.makedirs(OUT, exist_ok=True)
 SEED_PERM = 1          # PERMANOVA restricted-permutation seed
 SEED_RARE = 42         # rarefaction seed
 NP = 1999              # permutations
@@ -66,12 +68,16 @@ assert len(bio) == 48, "biological-sample count must be 48"
 
 # ---------- helpers ----------
 def prevalence_flag(reference, biological):
-    nc, nb = len(reference), len(biological); flagged={}
+    """Return (flagged, allp): flagged = OTUs with nominal Fisher p<0.05 (the permissive
+    removal rule); allp = Fisher p for EVERY OTU tested, so BH correction can be applied
+    across all OTUs rather than only the nominal hits."""
+    nc, nb = len(reference), len(biological); flagged={}; allp={}
     for o in C.index:
-        cp=(C.loc[o,reference]>0).sum(); bp=(C.loc[o,biological]>0).sum()
-        p=fisher_exact([[cp,nc-cp],[bp,nb-bp]],alternative="greater")[1]
-        if p<0.05: flagged[o]=(int(cp),int(bp),float(p))
-    return flagged
+        cp=int((C.loc[o,reference]>0).sum()); bp=int((C.loc[o,biological]>0).sum())
+        p=float(fisher_exact([[cp,nc-cp],[bp,nb-bp]],alternative="greater")[1])
+        allp[o]=(cp,bp,p)
+        if p<0.05: flagged[o]=(cp,bp,p)
+    return flagged, allp
 
 def clr_Ftest(clean_counts, cols, an_, tp_):
     fam=clean_counts.groupby(family).sum()[cols]
@@ -107,7 +113,7 @@ def permanova(cols, clean_counts, an_, tp_, seed=SEED_PERM, restrict=True):
     for _ in range(NP):
         if restrict:
             ptp=tp_.copy()
-            for aa in set(an_):
+            for aa in sorted(set(an_), key=str):   # fixed order -> deterministic RNG use
                 idx=np.where(an_==aa)[0]; ptp[idx]=rng.permutation(tp_[idx])
         else:
             ptp=rng.permutation(tp_)
@@ -139,8 +145,12 @@ def permdisp(groups_cols, clean_counts, labels, seed=SEED_PERM):
     return (cnt+1)/(NP+1)
 
 # ---------- Table 1 / S6-input: four decontamination rules ----------
-prev = prevalence_flag(ctrl, bio)
+prev, prev_allp = prevalence_flag(ctrl, bio)
 prev_set=set(prev); kit=set(C.index[genus.str.lower().isin(KITOME)])
+# BH correction across ALL tested OTUs (not just the nominal hits)
+_allp_series = pd.Series({o: prev_allp[o][2] for o in C.index})
+_bh_all = fdrc(_allp_series.values)
+bh_map = dict(zip(_allp_series.index, _bh_all))
 rules={"prevalence_only":prev_set,"kitome_only":kit,"union":prev_set|kit,"intersection":prev_set&kit}
 drows=[]
 for nm,fl in rules.items():
@@ -151,26 +161,26 @@ for nm,fl in rules.items():
 decon=pd.DataFrame(drows); decon.to_csv(f"{OUT}/Table1_decontamination_rules.csv",index=False)
 print("\n[Table 1] four decontamination rules\n",decon.to_string(index=False))
 
-# ---------- S2: removed OTUs with Fisher p, BH-FDR, flags ----------
+# ---------- S2: removed OTUs with Fisher p, BH-FDR (across ALL OTUs), flags ----------
+def _fmt_p(p):  # keep tiny p meaningful (6 significant figures), never round to 0.0000
+    return float(f"{p:.6g}")
 flag=rules["union"]
-prev_p={o:prev[o][2] for o in prev}
-bh=fdrc(np.array([prev_p[o] for o in prev_set])) if prev_set else np.array([])
-prev_bh=dict(zip(list(prev_set),bh))
 s2=[]
 for o in sorted(flag):
-    cp=(C.loc[o,ctrl]>0).sum(); bp=(C.loc[o,bio]>0).sum()
+    cp=int((C.loc[o,ctrl]>0).sum()); bp=int((C.loc[o,bio]>0).sum())
     s2.append({"OTU":o,"taxonomy":tax[o],"genus":genus[o],"family":family[o],
       "ctrl_prevalence":round(cp/len(ctrl),3),"bio_prevalence":round(bp/len(bio),3),
-      "fisher_p":round(prev_p.get(o,np.nan),4) if o in prev_p else "",
-      "fisher_BH_FDR":round(prev_bh[o],4) if o in prev_bh else "",
+      "fisher_p":_fmt_p(prev_allp[o][2]),
+      "fisher_BH_FDR":_fmt_p(bh_map[o]),
       "flagged_by_prevalence":o in prev_set,"flagged_by_catalogue":o in kit,
       "reads_all_lymph":int(C.loc[o,later_qc+lymph0].sum()),"reads_lymph_4_24h":int(C.loc[o,later_qc].sum())})
 pd.DataFrame(s2).to_csv(f"{OUT}/S2_removed_OTUs.csv",index=False)
-nbh=int((bh<0.05).sum()) if len(bh) else 0
-print(f"[S2] union removed {len(flag)} OTUs; prevalence-flagged {len(prev_set)}, of which {nbh} survive BH-FDR<0.05")
+nbh=sum(1 for o in prev_set if bh_map[o]<0.05)
+print(f"[S2] union removed {len(flag)} OTUs; prevalence-flagged {len(prev_set)}, "
+      f"of which {nbh} survive BH-FDR<0.05 (BH across all {len(C.index)} OTUs)")
 
 # ---------- controls-vs-lymph-only sensitivity ----------
-prev_lymphonly=set(prevalence_flag(ctrl, later_qc).keys())
+prev_lymphonly=set(prevalence_flag(ctrl, later_qc)[0].keys())
 tr=C[later_qc].values.sum()
 pct_lo=100*C.loc[C.index.isin(prev_lymphonly),later_qc].values.sum()/tr
 pct_union_lo=100*C.loc[C.index.isin(prev_lymphonly|kit),later_qc].values.sum()/tr
@@ -273,7 +283,7 @@ print("\n[S6] four-rule statistics\n",pd.DataFrame(s6).to_string(index=False))
 
 # ---------- Section 3.5 sensitivity: 0h + controls as uniform references ----------
 ref2=ctrl+lymph0
-prev2=set(prevalence_flag(ref2, bio).keys())
+prev2=set(prevalence_flag(ref2, bio)[0].keys())
 clean2=C.drop(index=list(prev2|kit))
 tr=C[later_qc].values.sum()
 rem1=100*C.loc[C.index.isin(prev_set),later_qc].values.sum()/tr
