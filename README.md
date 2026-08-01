@@ -4,10 +4,10 @@ Code and processed data for:
 
 > **A design-aware reanalysis of ultra-low-biomass mesenteric-lymph 16S data reveals batch- and contamination-sensitive temporal associations.**
 
-This repository reproduces **every downstream table and figure** in the paper from the
-Majorbio OTU-with-taxonomy table. The upstream steps (Trimmomatic → FLASH → UCHIME →
-UPARSE → SILVA 138) were performed by the sequencing provider and are **not** re-run here;
-the analysis begins from the 8,042-OTU table.
+This repository reproduces **all downstream tables, Figures 2–5 and every reported statistic**
+in the paper from the Majorbio OTU-with-taxonomy table (Figure 1 is a study-design schematic).
+The upstream steps (Trimmomatic → FLASH → UCHIME → UPARSE → SILVA 138) were performed by the
+sequencing provider and are **not** re-run here; the analysis begins from the 8,042-OTU table.
 
 ## What this is (and is not)
 
