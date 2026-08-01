@@ -1,98 +1,86 @@
-# Mesenteric lymph 16S — decontamination reanalysis (rat CLP sepsis)
+# Design-aware reanalysis of ultra-low-biomass mesenteric-lymph 16S data
 
-Reproducible analysis for the manuscript:
-**"Baseline mesenteric lymph is indistinguishable from reagent blanks and no robust
-temporal 16S signal survives design-appropriate reanalysis in experimental sepsis."**
+Code and processed data for:
 
-This repository reanalyses 16S rRNA (V4) profiles from a rat cecal ligation and
-puncture (CLP) sepsis model, with correct handling of contamination, sequencing
-depth, batch structure and the repeated-measures design. Running one script
-regenerates every number, table and figure in the paper.
+> **A design-aware reanalysis of ultra-low-biomass mesenteric-lymph 16S data reveals batch- and contamination-sensitive temporal associations.**
 
-## What the analysis shows
+This repository reproduces **every downstream table and figure** in the paper from the
+Majorbio OTU-with-taxonomy table. The upstream steps (Trimmomatic → FLASH → UCHIME →
+UPARSE → SILVA 138) were performed by the sequencing provider and are **not** re-run here;
+the analysis begins from the 8,042-OTU table.
 
-- Read-level "contamination fraction" is **rule-dependent**: the six negative
-  controls support removing only ~0.5% of lymph reads, whereas a genus blocklist
-  removes ~40%.
-- **Baseline (0 h) mesenteric lymph is near-sterile and compositionally
-  indistinguishable from the negative controls** (gut genera ~0.5%; Bray–Curtis
-  distance to controls ~0.32) — the clearest biological observation in the data.
-- In the design-appropriate 4–24 h window (5 animals, repeated measures),
-  **no bacterial family is FDR-significant** (0/297) and there is no alpha- or
-  beta-diversity time effect. Enterococcaceae, emphasised in earlier work, is not
-  significant (F = 0.49, p = 0.70); its apparent 4 h peak was driven by a single
-  38-read sample removed at quality control.
-- The null result is **robust to decontamination strategy** (sensitivity analysis
-  using the near-blank 0 h samples as extra controls).
+## What this is (and is not)
 
-## Data
+This is a **case study** demonstrating and evaluating an integrated, design-aware analytical
+**workflow** for ultra-low-biomass longitudinal 16S data — jointly handling the
+contamination-evidence source, sequencing-depth threshold, batch–timepoint structure and the
+repeated-measures design. It is **not** a new statistical algorithm, and with five animals it
+is not a general benchmark. Baseline (0 h) lymph was found to be **compositionally similar to the
+reagent controls** (a near-blank profile); because no absolute-load, qPCR or culture data were
+available, this is **not** claimed as evidence of sterility, and similarity in ordination is not
+proof of equivalence.
 
-| File | Description |
-|------|-------------|
-| `data/otu_taxon.xls` | Majorbio OTU count table (8,042 OTUs × 66 samples) with SILVA-138 taxonomy in the final `taxonomy` column. Tab-separated despite the `.xls` extension. |
-| `data/sample_metadata.csv` | Per-sample annotation: `sample_id, sample_type, group, animal_id, timepoint_h, batch, notes`. |
-
-Raw sequencing reads (FASTQ) are in the NCBI Sequence Read Archive under
-**BioProject PRJNA1464423**.
-
-### Design notes (read before reusing the data)
-
-- **Mesenteric lymph** was collected longitudinally from **5 animals** (IDs
-  1, 3, 5, 6, 9) at 0, 4, 8, 12, 24 h — i.e. a repeated-measures design, **not**
-  25 independent animals. Analyses must treat `animal_id` as a block / random
-  effect.
-- The **first-batch 0 h lymph** (`*_0hLB`) was contaminated (unflushed cannula)
-  and re-collected as **`LB_1`–`LB_5`** (LB_1→animal 1, LB_2→3, LB_3→5, LB_4→6,
-  LB_5→9), each with a paired extraction blank (`con_1`–`con_5`). Because `LB_1–5`
-  are a **separate extraction batch**, 0 h is confounded with reagent batch and is
-  used only descriptively; the primary analysis is the within-batch 4→24 h window.
-  The original `*_0hLB` columns are retained in the table but excluded from the
-  primary analysis (see `notes` in the metadata).
-- **Faecal (`*_FB`)** and **BALF (`*_FP`)** samples span three condition groups
-  (normal control 21/23/24/25/26; sepsis-no-drainage 11/13/14/15/16;
-  sepsis-drainage 1/3/5/6/9).
-
-## Reproduce
+## Reproduce everything
 
 ```bash
-pip install -r requirements.txt
-python reanalysis_pipeline.py
+pip install numpy scipy pandas matplotlib
+python3 reproduce_all.py            # uses the bundled data/otu_taxon.xls
+# or: python3 reproduce_all.py /path/to/otu_taxon.xls
 ```
 
-Outputs are written to `reanalysis_out/`:
+The input OTU table is bundled at `data/otu_taxon.xls`, so the command runs as-is.
+Outputs (CSV tables **and** rendered Figures 2–5 as PNG + PDF) are written to `repro_out/`.
+The run is deterministic (fixed RNG seeds: PERMANOVA permutations seed = 1, rarefaction seed = 42,
+1,999 permutations), so numbers are bit-for-bit reproducible.
 
-- `decontamination_rules.csv` — OTUs removed and read% by specimen type, for four rules
-- `differential_4_24h.csv` — family-level differential abundance (CLR + animal-adjusted F-test, BH-FDR)
-- `fig1_decontam_rules.png` — decontamination is rule-dependent
-- `fig2_enterococcaceae.png` — no Enterococcaceae time trend (4–24 h)
-- `fig3_pcoa_specimen.png` — 0 h baseline clusters with the negative controls
-- `fig4_baseline_blank.png` — baseline lymph is blank-like (almost no gut taxa)
+## Output → manuscript mapping
 
-The console also prints the beta-diversity PERMANOVA, alpha-diversity tests and the
-decontamination-strategy sensitivity analysis.
+| Output file (`repro_out/`)          | Manuscript element |
+|-------------------------------------|--------------------|
+| `Table1_decontamination_rules.csv`  | Table 1; Figure 2 (reads removed, 4 rules) |
+| `S1_primary_families.csv`           | Supplementary Table S1; Table 2 (selected rows) |
+| `S2_removed_OTUs.csv`               | Supplementary Table S2 (Fisher p + BH-FDR; 8/62 survive FDR<0.05) |
+| `S3_sample_accounting.csv`          | Supplementary Table S3 (per-sample ID, animal, type, timepoint, batch, depth, control type, included/excluded + reason) |
+| `S4_genus_catalogue.csv`            | Supplementary Table S4 (34-genus catalogue) |
+| `S5_ablation_full.csv`              | Supplementary Table S5; Table 3 (stepwise ablation: 22/311 → 0/297 → 0 → 0) |
+| `S6_four_rule_stats.csv`            | Supplementary Table S6 (all four rules: 0 FDR-sig; PERMANOVA/alpha per rule) |
+| `S_LOO_enterococcaceae.csv`         | Leave-one-animal-out (Enterococcaceae p = 0.41–0.83), §3.3 |
+| `Figure2_decontam_rules.png/.pdf`   | Figure 2 (reads removed, four rules) |
+| `Figure3_baseline_composition.*`    | Figure 3 (gut vs reagent read fractions) + `Fig3_baseline_composition.csv` |
+| `Figure4_pcoa.png/.pdf`             | Figure 4 (Bray–Curtis PCoA) |
+| `Figure5_enterococcaceae.png/.pdf`  | Figure 5 (Enterococcaceae trajectories) |
+| printed log                         | PERMANOVA 4–24 h (pseudo-F 1.21, R² 0.21, p 0.11); baseline-vs-controls (p 0.40; PERMDISP p 0.17; BC 0.32/0.50); §3.5 sensitivity (62→123; 0.5%→7.4%; 0/295; p 0.12) |
 
-## Methods (as implemented in `reanalysis_pipeline.py`)
+Figure 1 (study design) is a schematic and is not generated by the script; Figures 2–5 are
+rendered directly into `repro_out/` (PNG + vector PDF).
+Note: alpha-diversity p-values in **S6** are computed on decontaminated, rarefied counts (per rule);
+the values quoted in §3.3 (Shannon p = 0.58, richness p = 0.15) are on **undecontaminated**, rarefied counts.
 
-1. **QC** — prespecified read-depth floor of 5,000 reads (drops `5_4hLB`=38 and
-   `1_4hLB`=475); rarefaction to 5,000 for diversity.
-2. **Decontamination** — control-prevalence (one-sided Fisher exact, 6 controls vs
-   biological samples) ∪ genus-catalogue (reagent contaminant genera); reported
-   alongside prevalence-only, catalogue-only and intersection.
-3. **Differential abundance** — family-level CLR, animal-adjusted nested F-test for
-   the timepoint effect, Benjamini–Hochberg FDR.
-4. **Beta diversity** — Bray–Curtis PERMANOVA, permutations restricted within animal.
-5. **Sensitivity** — repeat using the near-blank 0 h samples as additional controls.
+## Key design facts
 
-## Dependencies
+- 15 rats, three groups of five: normal control (21,23,24,25,26), CLP no drainage (11,13,14,15,16),
+  CLP + mesenteric-lymph drainage (1,3,5,6,9).
+- Mesenteric lymph collected at 0, 4, 8, 12, 24 h from the drainage group only.
+- The 0-h lymph was **re-collected** in a separate extraction/sequencing batch (LB_1–LB_5 →
+  animals 1/3/5/6/9), so 0 h is confounded with reagent batch; primary analysis is the
+  within-batch 4–24 h window (18 samples; `1_4hLB` and `5_4hLB` excluded at <5,000 reads).
+- Six negative controls: five extraction blanks `con_1–con_5` (processed with the 0-h
+  re-collection batch) and one water control (main batch). The primary batch therefore lacks a
+  batch-matched extraction blank; the control-prevalence screen is **supportive, not definitive**.
+- Prevalence screen: 6 controls vs **48 biological samples** (18 QC-passed 4–24 h lymph + 15 faecal + 15 BALF).
 
-Python 3.10+, and only `pandas`, `numpy`, `scipy` (≥1.11) and `matplotlib`
-(see `requirements.txt`). No `statsmodels`/`scikit-bio` required.
+## Data availability
 
-## Ethics
+Raw 16S rRNA reads: NCBI SRA, BioProject **PRJNA1464423** (public).
 
-All animal procedures were approved by the Animal Ethics Committee of Shanghai Jiao
-Tong University (approval no. **A2016091**).
+## Files
 
-## License
+- `reproduce_all.py` — single deterministic script that regenerates all tables/figures data.
+- `data/otu_taxon.xls` — Majorbio OTU-with-taxonomy table (8,042 OTUs).
+- `repro_out/` — generated outputs (checked in for convenience).
+- `Supplementary_Tables.xlsx` — S1–S6 as submitted.
 
-Code: MIT (see `LICENSE`). Data files: CC BY 4.0.
+## Citation / version
+
+Please cite the paper together with the exact release tag or commit hash used for the analysis
+(a fixed release should be created and referenced before or at submission, ideally with a Zenodo DOI).
