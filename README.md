@@ -1,5 +1,7 @@
 # Design-aware reanalysis of ultra-low-biomass mesenteric-lymph 16S data
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21756012.svg)](https://doi.org/10.5281/zenodo.21756012)
+
 Code and processed data for:
 
 > **A design-aware reanalysis of ultra-low-biomass mesenteric-lymph 16S data reveals batch- and contamination-sensitive temporal associations.**
