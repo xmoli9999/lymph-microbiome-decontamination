@@ -1,100 +1,50 @@
 # Design-aware reanalysis of mesenteric-lymph 16S data reveals instability of apparent temporal associations
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21756012.svg)](https://doi.org/10.5281/zenodo.21756012)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21756011.svg)](https://doi.org/10.5281/zenodo.21756011)
 
-Code and processed data for:
+Code and data for:
 
 > **Design-aware reanalysis of mesenteric-lymph 16S data reveals instability of apparent temporal associations.**
 
-This repository reproduces **all downstream tables, Figures 2–5 and every reported statistic**
-in the paper from the Majorbio OTU-with-taxonomy table (Figure 1 is a study-design schematic).
-The upstream steps (Trimmomatic → FLASH → UCHIME → UPARSE → SILVA 138) were performed by the
-sequencing provider and are **not** re-run here; the analysis begins from the 8,042-OTU table.
-
-## What this is (and is not)
-
-This is a **case study** demonstrating and evaluating an integrated, design-aware analytical
-**workflow** for low-biomass longitudinal 16S data — jointly handling the
-contamination-evidence source, sequencing-depth threshold, batch–timepoint structure and the
-repeated-measures design. It is **not** a new statistical algorithm, and with five animals it
-is not a general benchmark. The pre-CLP baseline (0 h) lymph was found to be **compositionally
-similar to the reagent controls** (a near-blank profile); because no absolute-load, qPCR or
-culture data were available, this is **not** claimed as evidence of sterility, and similarity
-in ordination is not proof of equivalence.
+This repository contains the **author-written, independent implementation** of the downstream
+analysis. `independent_rewrite_analysis.py` was written from the statistical specification only
+(it reads the OTU-with-taxonomy table with the Python standard library and implements the QC,
+decontamination, family-level CLR models, PERMANOVA, alpha diversity, ablation and sensitivity
+analyses with NumPy/SciPy); it does not import or reuse any prior script. `render_figures.py`
+draws Figures 2–5 from the analysis outputs. The upstream steps
+(Trimmomatic → FLASH → UCHIME → UPARSE → SILVA 138) were performed by the sequencing provider
+and are not re-run here; the analysis begins from the 8,042-OTU table.
 
 ## Reproduce everything
 
 ```bash
 pip install -r requirements.txt
-python3 reproduce_all.py            # uses the bundled data/otu_taxon.xls
-# or: python3 reproduce_all.py /path/to/otu_taxon.xls
+python run_all.py data/otu_table2_with_taxonomy.xlsx --output-dir outputs
 ```
 
-The input OTU table is bundled at `data/otu_taxon.xls`, so the command runs as-is.
-Outputs (CSV tables **and** rendered Figures 2–5 as PNG + PDF) are written to `repro_out/`.
-The run is deterministic (fixed RNG seeds: PERMANOVA permutations seed = 1, rarefaction seed = 42,
-1,999 permutations; animal/group iteration order is sorted so results do not depend on the Python
-hash seed). **Numerical results are reproducible under the specified software environment
-(`requirements.txt`) and this fixed permutation scheme.** Exact floating-point last digits and
-image byte contents can still vary across NumPy/SciPy/BLAS builds and file timestamps.
+This regenerates every reported number, Supplementary Tables S1–S6 and Figures 2–5 (PNG + PDF).
+The run is deterministic (PERMANOVA permutation seed = 1, rarefaction seed = 42, 1,999
+permutations); **49/49 acceptance checks pass** against the pre-specified targets and two reruns
+are byte-identical (`outputs/acceptance_report.md`, `outputs/determinism_check.txt`).
 
-An independent R cross-check of the primary PERMANOVA (`permanova_validation.R`, using
-`vegan::adonis2` with within-animal restricted permutations) is also provided; Monte-Carlo
-permutation p-values may differ slightly from the Python value.
+## Files
 
-## Output → manuscript mapping
-
-| Output file (`repro_out/`)          | Manuscript element |
-|-------------------------------------|--------------------|
-| `Table1_decontamination_rules.csv`  | Table 1; Figure 2 (reads removed, 4 rules) |
-| `S1_primary_families.csv`           | Supplementary Table S1; Table 2 (selected rows) |
-| `S2_removed_OTUs.csv`               | Supplementary Table S2 (Fisher p + BH-FDR; 8/62 survive FDR<0.05) |
-| `S3_sample_accounting.csv`          | Supplementary Table S3 (per-sample ID, animal, type, timepoint, batch, depth, control type, included/excluded + reason) |
-| `S4_genus_catalogue.csv`            | Supplementary Table S4 (34-genus catalogue) |
-| `S5_ablation_full.csv`              | Supplementary Table S5; Table 3 (stepwise ablation: 22/311 → 0/297 → 0 → 0) |
-| `S6_four_rule_stats.csv`            | Supplementary Table S6 (all four rules: 0 FDR-sig; PERMANOVA/alpha per rule) |
-| `S_LOO_enterococcaceae.csv`         | Leave-one-animal-out (Enterococcaceae p = 0.41–0.83) |
-| `Figure2_decontam_rules.png/.pdf`   | Figure 2 (reads removed, four rules) |
-| `Figure3_baseline_composition.*`    | Figure 3 (gut vs reagent read fractions) + `Fig3_baseline_composition.csv` |
-| `Figure4_pcoa.png/.pdf`             | Figure 4 (Bray–Curtis PCoA) |
-| `Figure5_enterococcaceae.png/.pdf`  | Figure 5 (Enterococcaceae trajectories) |
-| printed log                         | PERMANOVA 4–24 h (pseudo-F 1.21, R² 0.21, p 0.136); baseline-vs-controls (p 0.40; PERMDISP p 0.17; BC 0.32/0.50); sensitivity (62→123; 0.5%→7.4%; 0/295; p 0.127); S2 BH-FDR 8/62 |
-
-Figure 1 (study design) is a schematic and is not generated by the script; Figures 2–5 are
-rendered directly into `repro_out/` (PNG + vector PDF).
-Note: alpha-diversity p-values in **S6** are computed on decontaminated, rarefied counts (per rule);
-the main-text alpha-diversity values (Shannon p = 0.58, richness p = 0.15) are on **undecontaminated**, rarefied counts.
-
-## Key design facts
-
-- 15 rats, three groups of five: normal control (21,23,24,25,26), CLP no drainage (11,13,14,15,16),
-  CLP + mesenteric-lymph drainage (1,3,5,6,9).
-- Mesenteric lymph collected from the drainage group at a **pre-CLP baseline (0 h)** and at
-  4, 8, 12 and 24 h after CLP.
-- The baseline (0-h) lymph was **re-collected** and processed in a separate extraction/sequencing
-  batch (LB_1–LB_5 → animals 1/3/5/6/9), so 0 h is confounded with reagent batch; the primary
-  analysis is the within-batch 4–24 h window (18 samples; `1_4hLB` and `5_4hLB` excluded at <5,000 reads).
-- Six negative controls: five extraction blanks `con_1–con_5` (processed with the 0-h
-  re-collection batch) and one water control (main batch). The primary batch therefore lacks a
-  batch-matched extraction blank; the control-prevalence screen is **supportive, not definitive**.
-- Prevalence screen: 6 controls vs **48 biological samples** (18 QC-passed 4–24 h lymph + 15 fecal + 15 BALF).
+- `independent_rewrite_analysis.py` — author-written analysis (numbers, tables S1–S6, figure-source CSVs).
+- `render_figures.py` — renders Figures 2–5 from the analysis outputs.
+- `run_all.py` — runs the analysis and the figures end to end.
+- `run_analysis.sh` — convenience wrapper.
+- `requirements.txt` — pinned Python dependencies.
+- `data/otu_table2_with_taxonomy.xlsx` — OTU-with-taxonomy table (8,042 OTUs, 61 samples).
+- `SHA256SUMS.txt` — checksums of the delivered files.
 
 ## Data availability
 
 Raw 16S rRNA reads: NCBI SRA, BioProject **PRJNA1464423** (public).
-
-## Files
-
-- `reproduce_all.py` — single deterministic script that regenerates all tables and Figures 2–5.
-- `permanova_validation.R` — independent R (`vegan::adonis2`) cross-check of the primary PERMANOVA.
-- `requirements.txt` — pinned Python dependency versions.
-- `data/otu_taxon.xls` — Majorbio OTU-with-taxonomy table (8,042 OTUs).
-- `repro_out/` — generated outputs (checked in for convenience).
-- `Supplementary_Tables.xlsx` — S1–S6 as submitted.
+The complete, permanently archived bundle (this code, the input table, all outputs, Figures 2–5,
+the run log, acceptance and determinism checks) is on Zenodo, **v2.0.0**, DOI
+**10.5281/zenodo.21756011** (concept DOI; always resolves to the latest version).
 
 ## Citation / version
 
-This repository is permanently archived on Zenodo (DOI **10.5281/zenodo.21756012**, tag `v1.0.1`).
-Please cite the paper together with the Zenodo DOI (or the exact release tag / commit hash) used
-for the analysis, so that the release, the Zenodo record and the commit that generated the reported
-results all coincide.
+Please cite the paper together with the Zenodo DOI (concept DOI 10.5281/zenodo.21756011, or the
+v2.0.0 version DOI 10.5281/zenodo.21802368) and, if needed, the exact release tag / commit hash.

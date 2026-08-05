@@ -1,8 +1,3 @@
-# Pinned to the environment used to generate the submitted results.
-# Python 3.11. Numerical results are reproducible under this environment and the
-# fixed within-animal permutation scheme (see README); permutation p-values are
-# deterministic given these versions and the fixed seeds.
-numpy==2.4.4
-scipy==1.17.1
-pandas==3.0.2
-matplotlib==3.10.9
+numpy>=2.0
+scipy>=1.13
+matplotlib>=3.8
