@@ -39,7 +39,7 @@ are byte-identical (`outputs/acceptance_report.md`, `outputs/determinism_check.t
 
 ## Data availability
 
-Raw 16S rRNA reads: NCBI SRA, BioProject **PRJNA1464423** (public).
+Raw 16S rRNA reads: NCBI SRA, BioProject **PRJNA1464423** (released on publication)
 The complete, permanently archived bundle (this code, the input table, all outputs, Figures 2–5,
 the run log, acceptance and determinism checks) is on Zenodo, **v2.0.0**, DOI
 **10.5281/zenodo.21756011** (concept DOI; always resolves to the latest version).
