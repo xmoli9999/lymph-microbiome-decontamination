@@ -33,13 +33,18 @@ are byte-identical (`outputs/acceptance_report.md`, `outputs/determinism_check.t
 - `render_figures.py` — renders Figures 2–5 from the analysis outputs.
 - `run_all.py` — runs the analysis and the figures end to end.
 - `run_analysis.sh` — convenience wrapper.
+- `revision_analysis.py` — analyses added during peer review (PeerJ #147031, revision 1): complete family-level results under the primary control-prevalence rule (Table S1) and under the union rule (Table S1b); leave-one-animal-out, ablation (Table S5) and Figure 5 under the primary rule; PERMANOVA with animal as an explicit model term (Table S7); exact alpha-diversity P values; per-sample source data and revised Figure 3. Run with `python revision_analysis.py data/otu_table2_with_taxonomy.xlsx --output-dir outputs_revision`.
 - `requirements.txt` — pinned Python dependencies.
 - `data/otu_table2_with_taxonomy.xlsx` — OTU-with-taxonomy table (8,042 OTUs, 61 samples).
 - `SHA256SUMS.txt` — checksums of the delivered files.
 
+## Revision (peer review, round 1)
+
+The code for the revision analyses (`revision_analysis.py`) was written with the assistance of an AI tool (Claude, Anthropic) and reviewed by the authors. It imports the locked analysis module unchanged and writes its results to `outputs_revision/`.
+
 ## Data availability
 
-Raw 16S rRNA reads: NCBI SRA, BioProject **PRJNA1464423** (released on publication).
+Raw 16S rRNA reads are **publicly available** in the NCBI Sequence Read Archive under BioProject **PRJNA1464423** (SRA study **SRP699482**).
 The complete, permanently archived bundle (this code, the input table, all outputs, Figures 2–5,
 the run log, acceptance and determinism checks) is on Zenodo, **v2.0.0**, DOI
 **10.5281/zenodo.21756011** (concept DOI; always resolves to the latest version).
