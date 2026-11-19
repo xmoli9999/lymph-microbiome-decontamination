@@ -42,7 +42,7 @@ def figure2(output_dir: Path) -> None:
     rows = read_csv_dict(output_dir / "Table1_decontamination_rules.csv")
     labels = {
         "prevalence": "Control prevalence",
-        "catalogue": "Genus catalogue",
+        "catalogue": "Genus catalog",
         "union": "Union",
         "intersection": "Intersection",
     }
@@ -60,7 +60,7 @@ def figure2(output_dir: Path) -> None:
         ax.set_xticks(x)
         ax.set_xticklabels([labels[row["rule"]] for row in rows], rotation=35, ha="right")
         ax.set_title(title)
-        ax.set_ylabel("Reads removed (%)")
+        ax.set_ylabel("Reads flagged (%)")
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
         maximum = max(values)
@@ -76,7 +76,7 @@ def figure2(output_dir: Path) -> None:
                 va="bottom",
                 fontsize=8,
             )
-    fig.suptitle("Read removal under four decontamination rules", y=1.02)
+    fig.suptitle("Reads flagged under four decontamination rules", y=1.02)
     fig.tight_layout()
     save_figure(fig, output_dir, "Figure2_decontamination_rules")
 
