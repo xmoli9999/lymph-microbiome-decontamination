@@ -1,0 +1,42 @@
+{
+  "upload_type": "software",
+  "title": "Analysis code for: An exploratory, design-aware reanalysis of mesenteric-lymph 16S rRNA gene data after cecal ligation and puncture in rats (v2.1.0, PeerJ revision 1)",
+  "version": "v2.1.0",
+  "creators": [
+    {
+      "name": "Wang, Zhenxia",
+      "affiliation": "Department of Emergency Medicine, Shanghai Fourth People's Hospital, School of Medicine, Tongji University, Shanghai, China"
+    },
+    {
+      "name": "Chen, Danxia",
+      "affiliation": "Department of Emergency Medicine, Shanghai Fourth People's Hospital, School of Medicine, Tongji University, Shanghai, China"
+    },
+    {
+      "name": "Gao, Zhenguo",
+      "affiliation": "School of Mathematical Sciences, Shanghai Jiao Tong University, Shanghai, China"
+    },
+    {
+      "name": "Yuan, Congli",
+      "affiliation": "Shanghai Key Laboratory of Veterinary Biotechnology, School of Agriculture and Biology, Shanghai Jiao Tong University, Shanghai, China"
+    },
+    {
+      "name": "Dong, Haisheng",
+      "affiliation": "Department of Critical Care Medicine, Shanghai TCM-Integrated Hospital, Shanghai University of Traditional Chinese Medicine, Shanghai, China"
+    },
+    {
+      "name": "Li, Yan",
+      "affiliation": "Department of Emergency Medicine, Shanghai Fourth People's Hospital, School of Medicine, Tongji University, Shanghai, China"
+    }
+  ],
+  "description": "<p>Analysis code, input data and outputs for the PeerJ manuscript #147031 (revision 1). Run <code>python run_all.py data/otu_table2_with_taxonomy.xlsx --output-dir outputs</code> to regenerate the main-text results, Supplementary Tables S1–S6 and Figures 2–5, and <code>python revision_analysis.py data/otu_table2_with_taxonomy.xlsx --output-dir outputs_revision</code> to regenerate the analyses added during peer review (Tables S1 and S1b under the primary and union rules, Table S5, Table S7 PERMANOVA with animal as an explicit model term, and revised Figures 3 and 5). Deterministic: PERMANOVA seed 1, rarefaction seed 42, 1,999 permutations.</p><p>Changes in v2.1.0: README data-availability statement corrected (raw reads are publicly available in the NCBI SRA under BioProject PRJNA1464423 / SRA study SRP699482); revision_analysis.py added; Figure 2 labels revised (label-only change); SHA256SUMS updated. The code for the revision analyses (revision_analysis.py) was written with the assistance of an AI tool (Claude, Anthropic) and reviewed by the authors.</p>",
+  "license": "MIT",
+  "keywords": [
+    "16S rRNA",
+    "low-biomass microbiome",
+    "decontamination",
+    "mesenteric lymph",
+    "cecal ligation and puncture",
+    "PERMANOVA",
+    "repeated measures"
+  ]
+}
